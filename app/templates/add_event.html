@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>新增活動</title>
+</head>
+<body>
+    <h1>新增活動</h1>
+    <form action="/add-event" method="post">
+        <div>
+            <label>活動名稱：</label>
+            <input type="text" name="title" required>
+        </div>
+        <br>
+        <div>
+            <label>活動說明：</label>
+            <textarea name="description" rows="4" cols="50"></textarea>
+        </div>
+        <br>
+        <div>
+            <label>活動日期與時間：</label>
+            <input type="datetime-local" name="event_date" required>
+        </div>
+        <br>
+        <div>
+            <label>活動地點：</label>
+            <input type="text" name="location" value="線上">
+        </div>
+        <br>
+        <div>
+            <label>人數上限：</label>
+            <input type="number" name="max_participants" value="50">
+        </div>
+        <br>
+        <button type="submit">送出建立</button>
+    </form>
+    <br>
+    <a href="/">⬅️ 返回活動列表</a>
+</body>
+</html>
