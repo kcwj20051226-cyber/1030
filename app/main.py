@@ -44,3 +44,81 @@ def add_event(
     cur.close()
     conn.close()
     return RedirectResponse(url="/", status_code=303)
+
+# 4. 顯示「活動報名」頁面
+@app.get("/register/{event_id}", response_class=HTMLResponse)
+def register_form(request: Request, event_id: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT id, title, description, event_date, location, max_participants, status
+        FROM events
+        WHERE id = %s
+        """,
+        (event_id,)
+    )
+    event = cur.fetchone()
+    cur.close()
+    conn.close()
+    return templates.TemplateResponse("register.html", {"request": request, "event": event})
+
+# 5. 處理「送出報名」表單
+@app.post("/register/{event_id}")
+def submit_registration(
+    event_id: int,
+    name: str = Form(...),
+    phone: str = Form(...)
+):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO registrations (event_id, name, phone)
+        VALUES (%s, %s, %s)
+        """,
+        (event_id, name, phone)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+    return RedirectResponse(url=f"/registrations/{event_id}", status_code=303)
+
+# 6. 查看某活動的報名名單
+@app.get("/registrations/{event_id}", response_class=HTMLResponse)
+def registration_list(request: Request, event_id: int):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT id, title, description, event_date, location, max_participants, status
+        FROM events
+        WHERE id = %s
+        """,
+        (event_id,)
+    )
+    event = cur.fetchone()
+
+    cur.execute(
+        """
+        SELECT id, event_id, name, phone
+        FROM registrations
+        WHERE event_id = %s
+        ORDER BY id ASC
+        """,
+        (event_id,)
+    )
+    registrations = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return templates.TemplateResponse(
+        "registrations.html",
+        {
+            "request": request,
+            "event": event,
+            "registrations": registrations
+        }
+    )
