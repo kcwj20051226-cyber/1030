@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>廢墟版活動報名平台</title>
+</head>
+<body>
+    <h1>可報名活動清單</h1>
+    <a href="/add-event">➕ 新增活動</a>
+    <hr>
+    <ul>
+        {% for event in events %}
+        <li>
+            <strong>{{ event[1] }}</strong> - {{ event[3] }} (地點: {{ event[4] }})
+            <br>
+            <p>{{ event[2] }}</p>
+            <a href="/register/{{ event[0] }}">✍️ 報名</a> | 
+            <a href="/registrations/{{ event[0] }}">📋 查看報名名單</a>
+        </li>
+        <br>
+        {% else %}
+        <li>目前沒有任何活動。</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
